@@ -290,9 +290,9 @@ class Printer
 		if ($type === null) {
 			return '';
 		}
-		if ($this->resolveTypes && $namespace) {
-			$type = $namespace->unresolveUnionType($type);
-		}
+		// if ($this->resolveTypes && $namespace) {
+		// 	$type = $namespace->unresolveUnionType($type);
+		// }
 		if ($nullable && strcasecmp($type, 'mixed')) {
 			$type = strpos($type, '|') === false
 				? '?' . $type
