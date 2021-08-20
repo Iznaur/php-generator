@@ -47,7 +47,8 @@ final class PhpNamespace
 
 	public function __construct(string $name)
 	{
-		if ($name !== '' && !Helpers::isNamespaceIdentifier($name)) {
+		if ($name !== '' && !Helpers::isNamespaceIdentifier($name))
+		{
 			throw new Nette\InvalidArgumentException("Value '$name' is not valid name.");
 		}
 		$this->name = $name;
@@ -85,28 +86,36 @@ final class PhpNamespace
 
 
 	/**
-	 * @throws InvalidStateException
 	 * @return static
+	 * @throws InvalidStateException
 	 */
 	public function addUse(string $name, string $alias = null, string &$aliasOut = null): self
 	{
 		$name = ltrim($name, '\\');
-		if ($alias === null && $this->name === Helpers::extractNamespace($name)) {
+		if ($alias === null && $this->name === Helpers::extractNamespace($name))
+		{
 			$alias = Helpers::extractShortName($name);
 		}
-		if ($alias === null) {
+		if ($alias === null)
+		{
 			$path = explode('\\', $name);
 			$counter = null;
-			do {
-				if (empty($path)) {
+			do
+			{
+				if (empty($path))
+				{
 					$counter++;
-				} else {
+				}
+				else
+				{
 					$alias = array_pop($path) . $alias;
 				}
 			} while (isset($this->uses[$alias . $counter]) && $this->uses[$alias . $counter] !== $name);
 			$alias .= $counter;
 
-		} elseif (isset($this->uses[$alias]) && $this->uses[$alias] !== $name) {
+		}
+		elseif (isset($this->uses[$alias]) && $this->uses[$alias] !== $name)
+		{
 			throw new InvalidStateException(
 				"Alias '$alias' used already for '{$this->uses[$alias]}', cannot use for '{$name}'."
 			);
@@ -134,24 +143,39 @@ final class PhpNamespace
 
 	public function unresolveName(string $name): string
 	{
-		if (isset(self::KEYWORDS[strtolower($name)]) || $name === '') {
+		if (isset(self::KEYWORDS[strtolower($name)]) || $name === '')
+		{
 			return $name;
 		}
 		$name = ltrim($name, '\\');
 		$res = null;
 		$lower = strtolower($name);
-		foreach ($this->uses as $alias => $original) {
-			if (Strings::startsWith($lower . '\\', strtolower($original) . '\\')) {
+
+		foreach ($this->uses as $alias => $original)
+		{
+			if ($alias === $name)
+			{
+				return $name;
+			}
+			if (Strings::startsWith($lower . '\\', strtolower($original) . '\\'))
+			{
+
 				$short = $alias . substr($name, strlen($original));
-				if (!isset($res) || strlen($res) > strlen($short)) {
+				if (!isset($res) || strlen($res) > strlen($short))
+				{
 					$res = $short;
 				}
 			}
 		}
 
-		if (!$res && Strings::startsWith($lower, strtolower($this->name) . '\\')) {
+
+		if (!$res && Strings::startsWith($lower, strtolower($this->name) . '\\'))
+		{
+
 			return substr($name, strlen($this->name) + 1);
-		} else {
+		}
+		else
+		{
 			return $res ?: ($this->name ? '\\' : '') . $name;
 		}
 	}
@@ -161,7 +185,8 @@ final class PhpNamespace
 	public function add(ClassType $class): self
 	{
 		$name = $class->getName();
-		if ($name === null) {
+		if ($name === null)
+		{
 			throw new Nette\InvalidArgumentException('Class does not have a name.');
 		}
 		$this->addUse($this->name . '\\' . $name);
@@ -198,10 +223,14 @@ final class PhpNamespace
 
 	public function __toString(): string
 	{
-		try {
+		try
+		{
 			return (new Printer)->printNamespace($this);
-		} catch (\Throwable $e) {
-			if (PHP_VERSION_ID >= 70400) {
+		}
+		catch (\Throwable $e)
+		{
+			if (PHP_VERSION_ID >= 70400)
+			{
 				throw $e;
 			}
 			trigger_error('Exception in ' . __METHOD__ . "(): {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}", E_USER_ERROR);
