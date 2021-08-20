@@ -270,7 +270,7 @@ class Printer
 	public function printType(?string $type, bool $nullable = false, PhpNamespace $namespace = null): string
 	{
 		return $type
-			? ($nullable ? '?' : '') . ($this->resolveTypes && $namespace ? $namespace->unresolveName($type) : $type)
+			? ($nullable ? '?' : '') . $type
 			: '';
 	}
 
