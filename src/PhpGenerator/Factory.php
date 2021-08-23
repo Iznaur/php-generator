@@ -269,22 +269,22 @@ final class Factory
 			}
 		}
 
-		// multi-line strings => singleline
-		foreach (array_merge(
-			$nodeFinder->findInstanceOf($statements, Node\Scalar\String_::class),
-			$nodeFinder->findInstanceOf($statements, Node\Scalar\EncapsedStringPart::class),
-		) as $node) {
-			/** @var Node\Scalar\String_|Node\Scalar\EncapsedStringPart $node */
-			$token = substr($body, $node->getStartFilePos() - $start, $node->getEndFilePos() - $node->getStartFilePos() + 1);
-			if (strpos($token, "\n") !== false) {
-				$quote = $node instanceof Node\Scalar\String_ ? '"' : '';
-				$replacements[] = [
-					$node->getStartFilePos(),
-					$node->getEndFilePos(),
-					$quote . addcslashes($node->value, "\x00..\x1F") . $quote,
-				];
-			}
-		}
+		// // multi-line strings => singleline
+		// foreach (array_merge(
+		// 	$nodeFinder->findInstanceOf($statements, Node\Scalar\String_::class),
+		// 	$nodeFinder->findInstanceOf($statements, Node\Scalar\EncapsedStringPart::class),
+		// ) as $node) {
+		// 	/** @var Node\Scalar\String_|Node\Scalar\EncapsedStringPart $node */
+		// 	$token = substr($body, $node->getStartFilePos() - $start, $node->getEndFilePos() - $node->getStartFilePos() + 1);
+		// 	if (strpos($token, "\n") !== false) {
+		// 		$quote = $node instanceof Node\Scalar\String_ ? '"' : '';
+		// 		$replacements[] = [
+		// 			$node->getStartFilePos(),
+		// 			$node->getEndFilePos(),
+		// 			$quote . addcslashes($node->value, "\x00..\x1F") . $quote,
+		// 		];
+		// 	}
+		// }
 
 		// HEREDOC => "string"
 		foreach ($nodeFinder->findInstanceOf($statements, Node\Scalar\Encapsed::class) as $node) {
