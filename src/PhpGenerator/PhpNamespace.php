@@ -176,7 +176,7 @@ final class PhpNamespace
 		}
 		else
 		{
-			return $res ?:  $name;
+			return $res ?: $name;
 		}
 	}
 
