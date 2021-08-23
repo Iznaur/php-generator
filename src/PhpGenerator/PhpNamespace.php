@@ -176,7 +176,7 @@ final class PhpNamespace
 		}
 		else
 		{
-			return $res ?: ($this->name ? '\\' : '') . $name;
+			return $res ?:  $name;
 		}
 	}
 
