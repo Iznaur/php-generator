@@ -56,7 +56,7 @@ final class Factory
 
 		$bodies = [];
 		foreach ($from->getMethods() as $method) {
-			if ($method->getDeclaringClass()->name === $from->name) {
+			if ($method->getFileName() === $from->getFileName()) {
 				$methods[] = $m = $this->fromMethodReflection($method);
 				if ($withBodies) {
 					$srcMethod = Nette\Utils\Reflection::getMethodDeclaringMethod($method);
