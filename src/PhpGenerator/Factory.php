@@ -46,10 +46,17 @@ final class Factory
 			$class->setImplements(array_diff($class->getImplements(), $from->getParentClass()->getInterfaceNames()));
 		}
 		$props = $methods = $consts = [];
+		foreach ($from->getTraits() as $trait) {
+			foreach ($trait->getProperties() as $property) {
+				$traitProperties[$property->getName()] = $property->getModifiers();
+			}
+		}
 		foreach ($from->getProperties() as $prop) {
+
 			if ($prop->isDefault()
 				&& $prop->getDeclaringClass()->name === $from->name
 				&& (PHP_VERSION_ID < 80000 || !$prop->isPromoted())
+				&& (!isset($traitProperties[$prop->getName()]) || $traitProperties[$prop->getName()] !== $prop->getModifiers())
 			) {
 				$props[] = $this->fromPropertyReflection($prop, $resolveClassNames);
 			}
@@ -58,7 +65,7 @@ final class Factory
 
 		$bodies = [];
 		foreach ($from->getMethods() as $method) {
-			if ($method->getDeclaringClass()->name === $from->name) {
+			if ($method->getFileName() === $from->getFileName()) {
 				$methods[] = $m = $this->fromMethodReflection($method, $resolveClassNames);
 				if ($withBodies) {
 					$srcMethod = Nette\Utils\Reflection::getMethodDeclaringMethod($method);
