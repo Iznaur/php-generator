@@ -165,8 +165,13 @@ final class Factory
 		$param->setReference($from->isPassedByReference());
 		if ($from->getType() instanceof \ReflectionNamedType) {
             $typeParts = explode('\\', $from->getType()->getName());
-            $param->setType($resolveClassNames ? implode('\\', $typeParts) : end($typeParts));
-			$param->setNullable($from->getType()->allowsNull());
+
+			if(!$from->getType()->isBuiltin() && (new \ReflectionClass($from->getType()->getName()))->isInternal()) {
+				$param->setType($resolveClassNames ? implode('\\', $typeParts) : '\\\\'.end($typeParts));
+			} else
+			{
+				$param->setType($resolveClassNames ? implode('\\', $typeParts) : end($typeParts));
+			}			$param->setNullable($from->getType()->allowsNull());
 		} elseif ($from->getType() instanceof \ReflectionUnionType) {
 			$param->setType((string) $from->getType());
 		}
